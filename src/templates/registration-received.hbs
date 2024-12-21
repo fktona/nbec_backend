@@ -1,0 +1,15 @@
+<!-- admin_registration_notification.hbs -->
+{{#> base_template title="New Registration Received" companyName="New Breed Educational Centre" currentYear="2024"}}
+{{#*inline "content"}}
+  <p>Dear Admin,</p>
+  <p>A new student has registered for the New Breed Educational Centre. Please find their details below:</p>
+  <ul>
+    <li><strong>Name:</strong> {{studentName}}</li>
+    <li><strong>Grade:</strong> {{studentGrade}}</li>
+    <li><strong>Subjects:</strong> {{studentSubjects}}</li>
+  </ul>
+  <p>To approve the student’s registration, please click the link below to access the dashboard:</p>
+  <a href="{{dashboardLink}}" class="button">Verify Registration</a>
+  <p>Best regards,<br>New Breed Educational Centre</p>
+  {{/inline}}
+{{/base_template}}

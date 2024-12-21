@@ -1,0 +1,14 @@
+<!-- application_received.hbs -->
+{{#> base_template title="Application Received" companyName="New Breed Educational Centre" currentYear="2024"}}
+ {{#*inline "content"}}
+  <h2>Application Received</h2>
+  <p>Dear {{studentName}},</p>
+  <p>Thank you for applying to {{companyName}}! We have received your application for the {{studentGrade}}. Below are the details of your application:</p>
+  <ul>
+    <li><strong>Name:</strong> {{studentName}}</li>
+    {{!-- <li><strong>Grade:</strong> {{studentGrade}}</li>
+    <li><strong>Subjects:</strong> {{studentSubjects}}</li> --}}
+  </ul>
+  <p>We will notify you once your application is processed.</p>
+  {{/inline}}
+{{/base_template}}

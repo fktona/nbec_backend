@@ -1,0 +1,14 @@
+<!-- student_approval.hbs -->
+{{#> base_template title="Registration Approved" companyName="New Breed Educational Centre" currentYear="2024"}}{{#*inline "content"}}
+  <h2>Admin Account Created</h2>
+  <p>Dear {{adminName}},</p>
+  <p>Your admin account has been successfully created for {{companyName}}.</p>
+  <p>Here are your account details:</p>
+  <ul>
+    <li><strong>Username:</strong> {{username}}</li>
+    <li><strong>Password:</strong> {{password}}</li>
+  </ul>
+  <p>We recommend changing your password after your first login.</p>
+  <p>You can log in to your account here: <a href="{{loginLink}}">Login</a></p>
+{{/inline}}
+{{/base_template}}
