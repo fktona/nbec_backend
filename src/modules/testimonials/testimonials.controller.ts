@@ -81,7 +81,8 @@ class TestimonialController {
   ) => {
     try {
       const { id } = req.params;
-      const { firstName, lastName, content, role, company } = req.body;
+      const { firstName, lastName, content, role, company, profileImage } =
+        req.body;
       const testimonial = await this.testimonialService.updateTestimonial(
         String(id),
         {
@@ -90,7 +91,7 @@ class TestimonialController {
           content,
           role,
           company,
-          profileImage: req?.file.path || '',
+          profileImage,
         }
       );
       res.status(200).json({
