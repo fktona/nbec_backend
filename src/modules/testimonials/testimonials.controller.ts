@@ -15,14 +15,15 @@ class TestimonialController {
     next: NextFunction
   ) => {
     try {
-      const { firstName, lastName, content, role, company } = req.body;
+      const { firstName, lastName, content, role, company, profileImage } =
+        req.body;
       const testimonial = await this.testimonialService.createTestimonial({
         firstName,
         lastName,
         content,
         role,
         company,
-        profileImage: req?.file.path || '',
+        profileImage,
       });
       res.status(HttpStatusCode.Created).json({
         data: testimonial,
