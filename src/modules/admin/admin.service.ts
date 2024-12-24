@@ -28,7 +28,7 @@ export default class AdminService {
 
       await sendEmail({
         to: data.email,
-        subject: 'Welcome to our platform',
+        subject: 'Admin account created',
         templateName: 'admin-creation',
         templateData: {
           adminName: data.name,
