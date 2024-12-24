@@ -9,6 +9,8 @@ import generateAccessToken, {
   generateStudentId,
 } from '@/utils/helper';
 import logger from '@/lib/logger';
+import sendEmail from '@/utils/mail';
+import students from './students.route';
 
 const prisma = new PrismaClient();
 
@@ -38,6 +40,16 @@ export default class StudentsService {
       },
     });
 
+    await sendEmail({
+      to: data.email,
+      subject: 'Registration successful',
+      templateName: 'registration',
+      templateData: {
+        registrationType: 'UTME',
+        studentName: user.firstName,
+      },
+    });
+
     return user;
   }
 
@@ -53,6 +65,18 @@ export default class StudentsService {
         ...data,
         status: 'approved',
         password: await bcrypt.hash(studentDefaultPassword, 10),
+      },
+    });
+
+    await sendEmail({
+      to: data.email,
+      subject: 'Registration successful',
+      templateName: 'student-approve',
+      templateData: {
+        registrationType: 'UTME',
+        studentName: user.firstName,
+        studentId: user.studentId,
+        password: studentDefaultPassword,
       },
     });
 

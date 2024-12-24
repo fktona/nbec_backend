@@ -47,15 +47,17 @@ model Blog {
 }
 
 model Testimonial {
-  id          String   @id @default(cuid())
-  firstName   String
-  lastName    String
+  id           String   @id @default(cuid())
+  firstName    String
+  lastName     String
   profileImage String?
-  content     String
-  role        String
-  company     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  content      String
+  role         String
+  company      String
+  isExternal   Boolean 
+  isApproved   Boolean  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model User {

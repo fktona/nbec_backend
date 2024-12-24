@@ -82,6 +82,39 @@ testimonial.get('/', TestimonialController.getAllTestimonials);
 testimonial.get('/:id', TestimonialController.getTestimonialById);
 
 /**
+ * POST /testimonials/external
+ * @summary Create a new external testimonial
+ * @tags testimonials
+ * @param {CreateTestimonialBody} request.body.required - Testimonial data
+ * @returns {Testimonial} 201 - Testimonial successfully created
+ * @example request - Create external testimonial example
+ * {
+ *  "firstName": "John",
+ * "lastName": "Doe",
+ * "content": "Outstanding service!",
+ * "role": "Manager",
+ * "company": "Business Inc"
+ * }
+ */
+
+testimonial.post(
+  '/external',
+  validateData(createTestimonialSchema),
+  TestimonialController.createExternalTestimonial
+);
+
+/**
+ * PATCH /testimonials/{id}/approve
+ * @summary Approve a testimonial
+ * @tags testimonials
+ * @param {string} id.path.required - Testimonial ID
+ * @returns {Testimonial} 200 - Testimonial successfully approved
+ * @returns {Error} 404 - Testimonial not found
+ */
+
+testimonial.patch('/:id/approve', TestimonialController.approveTestimonial);
+
+/**
  * PATCH /testimonials/{id}
  * @summary Update a testimonial
  * @tags testimonials

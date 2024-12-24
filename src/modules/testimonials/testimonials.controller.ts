@@ -24,6 +24,8 @@ class TestimonialController {
         role,
         company,
         profileImage,
+        isExternal: false, // or true, depending on your logic
+        isApproved: true, // or true, depending on your logic
       });
       res.status(HttpStatusCode.Created).json({
         data: testimonial,
@@ -33,7 +35,52 @@ class TestimonialController {
       next(error);
     }
   };
+  public createExternalTestimonial = async (
+    req: any,
+    res: CustomResponse<Testimonial>,
+    next: NextFunction
+  ) => {
+    try {
+      const { firstName, lastName, content, role, company, profileImage } =
+        req.body;
+      const testimonial =
+        await this.testimonialService.createExternalTestimonial({
+          firstName,
+          lastName,
+          content,
+          role,
+          company,
+          profileImage,
+          isExternal: true,
+          isApproved: false,
+        });
+      res.status(HttpStatusCode.Created).json({
+        data: testimonial,
+        message: 'Testimonial created successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
+  public approveTestimonial = async (
+    req: Request,
+    res: CustomResponse<Testimonial>,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      const testimonial = await this.testimonialService.approveTestimonial(
+        String(id)
+      );
+      res.status(200).json({
+        data: testimonial,
+        message: 'Testimonial approved successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
   // Get all testimonials
   public getAllTestimonials = async (
     req: Request,
@@ -81,8 +128,16 @@ class TestimonialController {
   ) => {
     try {
       const { id } = req.params;
-      const { firstName, lastName, content, role, company, profileImage } =
-        req.body;
+      const {
+        firstName,
+        lastName,
+        content,
+        role,
+        company,
+        profileImage,
+        isApproved,
+        isExternal,
+      } = req.body;
       const testimonial = await this.testimonialService.updateTestimonial(
         String(id),
         {
@@ -92,6 +147,8 @@ class TestimonialController {
           role,
           company,
           profileImage,
+          isExternal,
+          isApproved,
         }
       );
       res.status(200).json({

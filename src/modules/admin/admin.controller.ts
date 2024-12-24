@@ -3,6 +3,7 @@ import { HttpStatusCode } from 'axios';
 import AdminService from './admin.service';
 import Api from '@/lib/api';
 import { createAdminSchema } from '@/schema/admin.schema';
+import sendEmail from '@/utils/mail';
 
 export default class AdminController extends Api {
   private readonly adminService = new AdminService();

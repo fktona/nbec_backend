@@ -3,13 +3,6 @@ import path from 'path';
 import nodemailer, { type Transporter } from 'nodemailer';
 import handlebars from 'handlebars';
 
-// Define the structure of email data that will be used in the template
-interface EmailData {
-  recipientName: string;
-  subject: string;
-  messageBody: string;
-}
-
 // Define the structure for the response of sending an email
 interface SendEmailResponse {
   success: boolean;
@@ -19,68 +12,76 @@ interface SendEmailResponse {
 
 // Gmail SMTP configuration with Nodemailer
 const transporter: Transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.zoho.com',
+  port: 465, // Use 587 for TLS
+  secure: true, // true for SSL, false for TLS
   auth: {
-    user: 'your-email@gmail.com', // Replace with your Gmail address
-    pass: 'your-app-password', // Replace with your Gmail app password
+    user: process.env.ZOHO_EMAIL, // Zoho email address
+    pass: process.env.ZOHO_PASSWORD, // App Password
   },
 });
 
-// Function to load the template and render it using Handlebars
+// Helper function to safely read a file
+const readFileSafely = (filePath: string): string => {
+  try {
+    return fs.readFileSync(filePath, 'utf-8');
+  } catch (error: any) {
+    console.error(`Error reading file at ${filePath}:`, error.message);
+    throw new Error(`Template file not found at ${filePath}`);
+  }
+};
+
+const baseTemplatePath = path.resolve('src', 'templates', 'base_template.hbs');
+const baseTemplate = readFileSafely(baseTemplatePath);
+handlebars.registerPartial('base_template', baseTemplate);
+
 const generateEmailContent = (
   templateName: string,
-  data: EmailData
+  data: { [key: string]: any }
 ): string => {
-  // Load the base template (where the content will be injected)
-  const baseTemplatePath = path.join(
-    __dirname,
-    '../templates',
-    'base_template.hbs'
-  );
-  const baseTemplate = fs.readFileSync(baseTemplatePath, 'utf-8');
-  const baseCompiled = handlebars.compile(baseTemplate);
+  try {
+    const emailTemplatePath = path.resolve(
+      'src',
+      'templates',
+      `${templateName}.hbs`
+    );
+    const emailTemplate = readFileSafely(emailTemplatePath);
+    const emailCompiled = handlebars.compile(emailTemplate);
 
-  // Load the specific email template
-  const emailTemplatePath = path.join(
-    __dirname,
-    'templates',
-    'emails',
-    `${templateName}.hbs`
-  );
-  const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
-  const emailCompiled = handlebars.compile(emailTemplate);
-
-  // Render the content of the specific template
-  const content = emailCompiled(data);
-
-  // Combine base template with content
-  const htmlContent = baseCompiled({ subject: data.subject, content });
-
-  return htmlContent;
+    return emailCompiled(data);
+  } catch (error: any) {
+    console.error('Error generating email content:', error.message);
+    throw new Error('Failed to generate email content');
+  }
 };
 
 // Function to send an email
-const sendEmail = async (
-  to: string,
-  subject: string,
-  templateName: string,
-  templateData: EmailData
-): Promise<SendEmailResponse> => {
-  const htmlContent = generateEmailContent(templateName, templateData); // Generate dynamic HTML content
-
-  const mailOptions = {
-    from: 'your-email@gmail.com', // Sender email (must be your Gmail address)
-    to, // Receiver email
-    subject, // Email subject
-    html: htmlContent, // Email body
-  };
-
+const sendEmail = async ({
+  to,
+  subject,
+  templateName,
+  templateData,
+}: {
+  to: string;
+  subject: string;
+  templateName: string;
+  templateData: { [key: string]: any };
+}): Promise<SendEmailResponse> => {
   try {
+    const htmlContent = generateEmailContent(templateName, templateData); // Generate dynamic HTML content
+
+    const mailOptions = {
+      from: process.env.ZOHO_EMAIL, // Sender email
+      to, // Receiver email
+      subject, // Email subject
+      html: htmlContent, // Email body
+    };
+
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent successfully:', info.response);
     return { success: true, message: 'Email sent successfully' };
   } catch (error: any) {
-    console.error('Error sending email:', error);
+    console.error('Error sending email:', error.message);
     return {
       success: false,
       message: 'Failed to send email',

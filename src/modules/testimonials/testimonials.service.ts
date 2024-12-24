@@ -12,6 +12,21 @@ export default class TestimonialService {
     });
   };
 
+  public createExternalTestimonial = async (
+    data: Omit<Testimonial, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<Testimonial> => {
+    return await prisma.testimonial.create({
+      data,
+    });
+  };
+
+  public approveTestimonial = async (id: string): Promise<Testimonial> => {
+    return await prisma.testimonial.update({
+      where: { id },
+      data: { isApproved: true },
+    });
+  };
+
   // Get all testimonials
   public getAllTestimonials = async (): Promise<Testimonial[]> => {
     return await prisma.testimonial.findMany();
