@@ -31,7 +31,7 @@ export default class AdminService {
         subject: 'Welcome to our platform',
         templateName: 'admin-creation',
         templateData: {
-          name: data.name,
+          adminName: data.name,
           username: data.username,
           password: adminDefaultPassword,
           loginLink: `${process.env.ADMIN_URL}/login`,
